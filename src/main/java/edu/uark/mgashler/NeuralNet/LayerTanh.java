@@ -1,116 +1,101 @@
 package edu.uark.mgashler.NeuralNet;
 
-import edu.uark.mgashler.Json;
 
+import java.util.List;
 import java.util.Random;
 
-public class LayerTanh extends Layer
-{
+public class LayerTanh extends Layer {
+
     /// General-purpose constructor
-    public LayerTanh(int nodes)
-    {
+    public LayerTanh(int nodes) {
         super(nodes);
     }
 
-
     /// Copy constructor
-    public LayerTanh(LayerTanh that)
-    {
+    public LayerTanh(LayerTanh that) {
         super(that);
     }
 
-
     /// Unmarshal from a JSON DOM
-    public LayerTanh(Json n)
-    {
-        super(n);
-    }
+//    public LayerTanh(Json n) {
+//        super(n);
+//    }
 
-
-    protected LayerTanh clone()
-    {
+    public LayerTanh clone() {
         return new LayerTanh(this);
     }
 
-
     /// Marshal into a JSON DOM
-    Json marshal()
-    {
-        Json ob = Json.newObject();
-        ob.add("type", t_tanh);
-        ob.add("units", (long)outputCount()); // required in all layers
-        return ob;
+//    public Json marshal() {
+//        Json ob = Json.newObject();
+//        ob.add("type", LayerTypes.TANH.ordinal());
+//        ob.add("units", (long)outputCount()); // required in all layers
+//        return ob;
+//    }
+
+    public void initWeights(Random r) {
+
     }
 
-
-    void copy(LayerTanh src)
-    {
-    }
-
-
-    int type() { return t_tanh; }
-    int inputCount() { return activation.length; }
-
-
-    void initWeights(Random r)
-    {
-    }
-
-
-    int countWeights()
-    {
-        return 0;
-    }
-
-
-    int setWeights(double[] w, int start)
-    {
-        if(w.length != 0)
-            throw new IllegalArgumentException("size mismatch");
-        return 0;
-    }
-
-
-    double[] forwardProp(double[] in)
-    {
-        if(in.length != outputCount())
-            throw new IllegalArgumentException("size mismatch. " + Integer.toString(in.length) + " != " + Integer.toString(outputCount()));
-        for(int i = 0; i < activation.length; i++)
-        {
-            activation[i] = Math.tanh(in[i]);
+    public List<Double> forwardProp(List<Double> in) {
+        if(in.size() != outputCount()) {
+            //throw new IllegalArgumentException("size mismatch. " + Integer.toString(in.size()) + " != " + Integer.toString(outputCount()));
+        }
+        for(int i = 0; i < activation.size(); i++) {
+            activation.set(i,Math.tanh(in.get(i)));
         }
         return activation;
     }
 
-
-    void backProp(Layer upStream)
-    {
-        if(upStream.outputCount() != outputCount())
+    public void backProp(Layer upStream) {
+        if(upStream.outputCount() != outputCount()) {
             throw new IllegalArgumentException("size mismatch");
-        for(int i = 0; i < activation.length; i++)
-        {
-            upStream.error[i] = error[i] * (1.0 - activation[i] * activation[i]);
+        }
+        for(int i = 0; i < activation.size(); i++) {
+            upStream.error.set(i,error.get(i) * (1.0 - activation.get(i) * activation.get(i)));
         }
     }
 
+    public void scaleGradient(double momentum) {
 
-    void scaleGradient(double momentum)
-    {
     }
 
+    public void updateGradient(List<Double> in) {
 
-    void updateGradient(double[] in)
-    {
     }
 
+    @Override
+    public void step(double stepSize) {
 
-    void step(double stepSize)
-    {
     }
 
+//    void copy(LayerTanh src) {
+//    }
 
-    // Applies both L2 and L1 regularization to the weights and bias values
-    void regularizeWeights(double lambda)
-    {
-    }
+//    public int type() {
+//        return t_tanh;
+//    }
+
+//    public int inputCount() {
+//        return activation.length;
+//    }
+//    public void step(double stepSize) {
+//
+//    }
+
+    // Applies both L2 and L1 regularization to the weights and biasArray values
+//    void regularizeWeights(double lambda) {
+//
+//    }
+    //    public int countWeights() {
+//        return 0;
+//    }
+
+//    public int setWeights(double[] w, int start) {
+//        if(w.length != 0) {
+//            throw new IllegalArgumentException("size mismatch");
+//        }
+//        return 0;
+//    }
+
 }
