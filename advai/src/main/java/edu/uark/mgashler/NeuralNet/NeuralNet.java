@@ -4,9 +4,9 @@ package edu.uark.mgashler.NeuralNet;
 // See http://creativecommons.org/publicdomain/zero/1.0/
 // ----------------------------------------------------------------
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.ArrayList;
 
 public class NeuralNet {
 	public ArrayList<Layer> layers = new ArrayList<>();
@@ -15,11 +15,11 @@ public class NeuralNet {
 	public NeuralNet() { }
 
 	/// Copy constructor
-	public NeuralNet(NeuralNet that) {
-		for(int i = 0; i < that.layers.size(); i++) {
-			layers.add(that.layers.get(i).clone());
-		}
-	}
+//	public NeuralNet(NeuralNet that) {
+//		for(int i = 0; i < that.layers.size(); i++) {
+//			layers.add(that.layers.get(i).clone());
+//		}
+//	}
 
 	/// Unmarshals from a JSON DOM.
 //	public NeuralNet(Json n) {
@@ -43,7 +43,7 @@ public class NeuralNet {
 	/// Initializes the weights and biases with small random values
 	public void init(Random r) {
 		for(int i = 0; i < layers.size(); i++) {
-			layers.get(i).initWeights(r);
+			getLayer(i).initWeights(r);
 		}
 	}
 
@@ -58,22 +58,31 @@ public class NeuralNet {
 //        return in;
 //    }
 
+    private Layer getLayer(int index) {
+	    return layers.get(index);
+    }
+
 
 	/// Feeds "in" into this neural network and propagates it forward to compute predicted outputs.
 	public List<Double> forwardProp(List<Double> in) {
+
+	    List<Double> temp = new ArrayList<>(in);
 		for(int i = 0; i < layers.size(); i++) {
-			in = layers.get(i).forwardProp(in);
-		}
-		return in;
+		    List<Double> t = getLayer(i).forwardProp(in);
+		    in.clear();
+		    in.addAll(t);
+        }
+
+		return temp;
 	}
 
     /// Backpropagates the error to the upstream layer.
     void backProp(List<Double> target) {
         int i = layers.size() - 1;
-        Layer l = layers.get(i);
+        Layer l = getLayer(i);
         l.computeError(target);
         for(i--; i >= 0; i--) {
-            Layer upstream = layers.get(i);
+            Layer upstream = getLayer(i);
             l.backProp(upstream);
             l = upstream;
         }
@@ -82,18 +91,18 @@ public class NeuralNet {
     /// Updates the weights and biases
     void descendGradient(List<Double> in, double learningRate) {
         for(int i = 0; i < layers.size(); i++) {
-            Layer l = layers.get(i);
+            Layer l = getLayer(i);
             l.scaleGradient(0.0);
             l.updateGradient(in);
             l.step(learningRate);
             in.clear();
-            in.addAll(l.activation);
+            in.addAll(l.getActivationArray());
         }
     }
 
     /// Refines the weights and biases with on iteration of stochastic gradient descent.
     public void trainIncremental(List<Double> in, List<Double> target, double learningRate) {
-        forwardProp(in);
+        in = forwardProp(in);
         backProp(target);
         //backPropAndBendHinge(target, learningRate);
         descendGradient(in, learningRate);

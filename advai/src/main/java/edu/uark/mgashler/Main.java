@@ -26,11 +26,11 @@ class Main {
 			// Make a new model
 			System.out.println("Making a new model...");
 			nn = new NeuralNet();
-			//nn.layers.add(new LayerLinear(3, 10));
+			nn.layers.add(new LayerLinear(3, 10));
 			nn.layers.add(new LayerTanh(10));
-			//nn.layers.add(new LayerLinear(10, 8));
+			nn.layers.add(new LayerLinear(10, 8));
 			nn.layers.add(new LayerTanh(8));
-			//nn.layers.add(new LayerLinear(8, 1));
+			nn.layers.add(new LayerLinear(8, 1));
 			nn.layers.add(new LayerTanh(1));
 			Random rand = new Random(1234);
 			nn.init(rand);
