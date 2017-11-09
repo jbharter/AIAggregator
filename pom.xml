@@ -26,6 +26,7 @@
     <modules>
         <module>advai</module>
         <module>spark</module>
+        <module>SourceIngest</module>
     </modules>
 
     <dependencyManagement>
