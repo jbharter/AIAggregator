@@ -1,6 +1,6 @@
 package com.github.jbharter.NameClassifier
 
-import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.spark.SparkContext
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.mllib.tree.RandomForest
@@ -149,9 +149,9 @@ object TestFile extends App {
 
   //var nameCategoryFFTDatas = sc.textFile("matprocessedNames.csv").mapPartitionsWithIndex { (idx, iter) => if (idx == 0) iter.drop(1) else iter } //.collect()
 
-    val config = new SparkConf
-      config.setMaster("local[*]")
-      config.setAppName("remote scala-spark exec jharte")
+   // val config = new SparkConf
+   //   config.setMaster("local[*]")
+   //   config.setAppName("remote scala-spark exec jharte")
 
     //val sc = new SparkContext(config)
     //val local_file = new BufferedReader(new InputStreamReader(new FileInputStream("resources/procDataMassaged.csv"))).lines().collect(Collectors.toList())
@@ -183,8 +183,8 @@ object TestFile extends App {
 
   //}
 
-  val sc = SparkContext.getOrCreate(config)
-  var data = sc.textFile("matprocessedNames.csv").mapPartitionsWithIndex { (idx, iter) => if (idx == 0) iter.drop(1) else iter } //sc.parallelize(nameCategoryFFTDatas.slice(1,nameCategoryFFTDatas.length))
+  val sc = SparkContext.getOrCreate()
+  var data = sc.textFile("other").mapPartitionsWithIndex { (idx, iter) => if (idx == 0) iter.drop(1) else iter } //sc.parallelize(nameCategoryFFTDatas.slice(1,nameCategoryFFTDatas.length))
     // split on comma
     .flatMap((s:String) => Row.fromProcessedNameStringRows(s).iterator)
     .filter(r => r.forallFT(_.bothAreNot(_ == Double.NegativeInfinity)))
@@ -198,10 +198,11 @@ object TestFile extends App {
   val maxBins = numClasses
   val featureSubsetStrategy = "auto"
   val impurity = "gini"
+  impurity.indexOf(",")
 
   val numTrees = 500
 
-  val maxDepth = 5
+  val maxDepth = 20
   val model = RandomForest.trainClassifier(trainingData.toJavaRDD(),numClasses,categoricalFeaturesInfo,numTrees,featureSubsetStrategy,impurity,maxDepth,maxBins,0)
 
   // Evaluate model on test instances and compute test error
