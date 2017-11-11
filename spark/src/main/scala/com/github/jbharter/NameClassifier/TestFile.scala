@@ -184,7 +184,7 @@ object TestFile extends App {
   //}
 
   val sc = SparkContext.getOrCreate()
-  var data = sc.textFile("other").mapPartitionsWithIndex { (idx, iter) => if (idx == 0) iter.drop(1) else iter } //sc.parallelize(nameCategoryFFTDatas.slice(1,nameCategoryFFTDatas.length))
+  var data = sc.textFile("other").cache() //.mapPartitionsWithIndex { (idx, iter) => if (idx == 0) iter.drop(1) else iter } //sc.parallelize(nameCategoryFFTDatas.slice(1,nameCategoryFFTDatas.length))
     // split on comma
     .flatMap((s:String) => Row.fromProcessedNameStringRows(s).iterator)
     .filter(r => r.forallFT(_.bothAreNot(_ == Double.NegativeInfinity)))
